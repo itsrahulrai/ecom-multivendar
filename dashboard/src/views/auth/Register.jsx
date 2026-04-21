@@ -48,24 +48,39 @@ const Divider = ({ label }) => (
 );
 
 // ─── Input Field ──────────────────────────────────────────────────────────────
-
-const Field = ({ icon: Icon, label, type = "text", placeholder, toggleFn, showToggle }) => (
+const Field = ({
+  icon: Icon,
+  label,
+  type = "text",
+  placeholder,
+  name,
+  value,
+  onChange,
+  toggleFn,
+  showToggle
+}) => (
   <div>
     <label className="block text-[10px] font-bold tracking-[0.09em] uppercase text-stone-400 mb-[5px]">
       {label}
     </label>
+
     <div className="relative">
       <Icon size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
+
       <input
         type={type}
+        name={name}               
+        value={value}             
+        onChange={onChange}
         placeholder={placeholder}
-        className="w-full pl-[34px] pr-[34px] py-[9px] rounded-[10px] text-[0.84rem] text-stone-700 bg-[#faf8f5] border-2 border-[#e7e3dc] outline-none transition-all duration-150 placeholder:text-stone-300 focus:bg-white focus:border-orange-500 focus:ring-[3px] focus:ring-orange-500/10 box-border"
+        className="w-full pl-[34px] pr-[34px] py-[9px] rounded-[10px] text-[0.84rem] text-stone-700 bg-[#faf8f5] border-2 border-[#e7e3dc] outline-none focus:bg-white focus:border-orange-500 focus:ring-[3px] focus:ring-orange-500/10"
       />
+
       {toggleFn && (
         <button
           type="button"
           onClick={toggleFn}
-          className="absolute right-[10px] top-1/2 -translate-y-1/2 text-stone-400 hover:text-orange-500 transition-colors bg-transparent border-none cursor-pointer p-0 flex"
+          className="absolute right-[10px] top-1/2 -translate-y-1/2 text-stone-400 hover:text-orange-500"
         >
           {showToggle ? <HiOutlineEyeSlash size={14} /> : <HiOutlineEye size={14} />}
         </button>
@@ -103,34 +118,7 @@ const FacebookIcon = () => (
   </svg>
 );
 
-// ─── Vendor Toggle ────────────────────────────────────────────────────────────
 
-const VendorToggle = ({ active, onToggle }) => (
-  <button
-    type="button"
-    onClick={onToggle}
-    className={`w-full flex items-center gap-[10px] px-[13px] py-[10px] rounded-xl border-2 cursor-pointer transition-all duration-[180ms] text-left ${active ? "border-orange-500 bg-orange-50" : "border-[#e7e3dc] bg-[#faf8f5] hover:border-orange-300"
-      }`}
-  >
-    {/* Checkbox indicator */}
-    <div className={`w-[18px] h-[18px] rounded-[5px] border-2 flex items-center justify-center shrink-0 transition-all duration-[180ms] ${active ? "bg-orange-500 border-orange-500" : "bg-white border-stone-300"
-      }`}>
-      {active && <HiOutlineCheck size={10} color="#fff" />}
-    </div>
-
-    <HiOutlineBuildingStorefront size={15} color={active ? "#f97316" : "#a8a29e"} />
-
-    <span className={`text-[0.82rem] font-semibold flex-1 ${active ? "text-orange-700" : "text-stone-500"}`}>
-      Register as a Vendor
-    </span>
-
-    {active && (
-      <span className="text-[9px] font-extrabold bg-orange-50 text-orange-500 border-[1.5px] border-orange-200 rounded-full px-2 py-[2px] uppercase tracking-[0.04em]">
-        ON
-      </span>
-    )}
-  </button>
-);
 
 // ─── Left Panel ───────────────────────────────────────────────────────────────
 
@@ -194,7 +182,27 @@ const LeftPanel = () => (
 
 export default function Register() {
   const [showPass, setShowPass] = useState(false);
-  const [isVendor, setIsVendor] = useState(false);
+
+  const [state, setState] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    password: "",
+  });
+
+
+  const inputHandle = (e) => {
+    setState({
+      ...state,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  const submitHandle = (e) => {
+    e.preventDefault();
+  console.log("STATE:", state);
+  }
+
 
   return (
     <div className="h-screen flex bg-[#f5f0e8]">
@@ -242,48 +250,53 @@ export default function Register() {
           <Divider label="OR SIGN UP WITH EMAIL" />
 
           {/* Form fields */}
-          <div className="flex flex-col gap-[10px] mt-[14px]">
-            <Field icon={HiOutlineUser} label="Full Name" placeholder="Rahul Sharma" />
-            <Field icon={HiOutlineEnvelope} label="Email Address" type="email" placeholder="rahul@example.com" />
-            <Field icon={HiOutlinePhone} label="Phone Number" type="tel" placeholder="+91 98765 43210" />
-            <Field
-              icon={HiOutlineLockClosed}
-              label="Password"
-              type={showPass ? "text" : "password"}
-              placeholder="Min. 8 characters"
-              toggleFn={() => setShowPass(p => !p)}
-              showToggle={showPass}
-            />
+          <form onSubmit={submitHandle}>
+            <div className="flex flex-col gap-[10px] mt-[14px]">
+              <Field icon={HiOutlineUser}  onChange={inputHandle} value={state.fullName} label="Full Name" name="fullName" placeholder="Rahul Sharma" />
+              <Field icon={HiOutlineEnvelope} onChange={inputHandle} value={state.email} label="Email Address" type="email" name="email" placeholder="rahul@example.com" />
+              <Field icon={HiOutlinePhone} onChange={inputHandle} value={state.phone} label="Phone Number" type="tel" name="phone" placeholder="+91 98765 43210" />
+              <Field
+                icon={HiOutlineLockClosed}
+                label="Password"
+                name="password"
+                onChange={inputHandle}
+                value={state.password}
+                type={showPass ? "text" : "password"}
+                placeholder="Min. 8 characters"
+                toggleFn={() => setShowPass(p => !p)}
+                showToggle={showPass}
+              />
 
-            <VendorToggle active={isVendor} onToggle={() => setIsVendor(v => !v)} />
 
-            {/* Terms */}
-            <p className="text-[11px] text-stone-400 leading-[1.55] m-0">
-              By continuing you agree to our{" "}
-              <span className="text-orange-500 font-semibold cursor-pointer">Terms</span> and{" "}
-              <span className="text-orange-500 font-semibold cursor-pointer">Privacy Policy</span>.
-            </p>
+              {/* Terms */}
+              <p className="text-[11px] text-stone-400 leading-[1.55] m-0">
+                By continuing you agree to our{" "}
+                <span className="text-orange-500 font-semibold cursor-pointer">Terms</span> and{" "}
+                <span className="text-orange-500 font-semibold cursor-pointer">Privacy Policy</span>.
+              </p>
 
-            {/* Submit */}
-            <button
-              type="button"
-              className="w-full flex items-center justify-center gap-[7px] bg-stone-900 hover:bg-stone-800 active:scale-[0.98] text-white font-bold text-[0.875rem] py-[13px] rounded-xl border-none cursor-pointer transition-all duration-200 hover:-translate-y-[1px] hover:shadow-[0_8px_20px_rgba(28,25,23,0.22)]"
-            >
-              Create Account <HiOutlineArrowUpRight size={16} />
-            </button>
-
-            {/* Sign in link */}
-            <p className="text-center text-[0.82rem] text-stone-500 m-0">
-              Already have an account?{" "}
-              <Link
-                to="/login"
-                className="text-stone-900 font-extrabold border-b-2 border-orange-500 pb-[1px] hover:text-orange-600"
+              {/* Submit */}
+              <button
+                type="submit"
+                className="w-full flex items-center justify-center gap-[7px] bg-stone-900 hover:bg-stone-800 active:scale-[0.98] text-white font-bold text-[0.875rem] py-[13px] rounded-xl border-none cursor-pointer transition-all duration-200 hover:-translate-y-[1px] hover:shadow-[0_8px_20px_rgba(28,25,23,0.22)]"
               >
-                Sign in
-              </Link>
-            </p>
-          </div>
+                Create Account <HiOutlineArrowUpRight size={16} />
+              </button>
 
+              
+
+              {/* Sign in link */}
+              <p className="text-center text-[0.82rem] text-stone-500 m-0">
+                Already have an account?{" "}
+                <Link
+                  to="/login"
+                  className="text-stone-900 font-extrabold border-b-2 border-orange-500 pb-[1px] hover:text-orange-600"
+                >
+                  Sign in
+                </Link>
+              </p>
+            </div>
+          </form>
         </div>
       </div>
     </div>
