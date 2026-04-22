@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import {
   HiOutlineUser, HiOutlineEnvelope, HiOutlinePhone,
   HiOutlineLockClosed, HiOutlineEye, HiOutlineEyeSlash,
-  HiOutlineCheck, HiOutlineBuildingStorefront, HiOutlineArrowUpRight,
+  HiOutlineBuildingStorefront, HiOutlineArrowUpRight,
 } from "react-icons/hi2";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -69,8 +69,8 @@ const Field = ({
 
       <input
         type={type}
-        name={name}               
-        value={value}             
+        name={name}
+        value={value}
         onChange={onChange}
         placeholder={placeholder}
         className="w-full pl-[34px] pr-[34px] py-[9px] rounded-[10px] text-[0.84rem] text-stone-700 bg-[#faf8f5] border-2 border-[#e7e3dc] outline-none focus:bg-white focus:border-orange-500 focus:ring-[3px] focus:ring-orange-500/10"
@@ -188,19 +188,21 @@ export default function Register() {
     email: "",
     phone: "",
     password: "",
+    agree: false,
   });
 
 
   const inputHandle = (e) => {
+    const { name, value, type, checked } = e.target;
     setState({
       ...state,
-      [e.target.name]: e.target.value
-    })
+      [name]: type === "checkbox" ? checked : value
+    });
   }
 
   const submitHandle = (e) => {
     e.preventDefault();
-  console.log("STATE:", state);
+    console.log("STATE:", state);
   }
 
 
@@ -252,7 +254,7 @@ export default function Register() {
           {/* Form fields */}
           <form onSubmit={submitHandle}>
             <div className="flex flex-col gap-[10px] mt-[14px]">
-              <Field icon={HiOutlineUser}  onChange={inputHandle} value={state.fullName} label="Full Name" name="fullName" placeholder="Rahul Sharma" />
+              <Field icon={HiOutlineUser} onChange={inputHandle} value={state.fullName} label="Full Name" name="fullName" placeholder="Rahul Sharma" />
               <Field icon={HiOutlineEnvelope} onChange={inputHandle} value={state.email} label="Email Address" type="email" name="email" placeholder="rahul@example.com" />
               <Field icon={HiOutlinePhone} onChange={inputHandle} value={state.phone} label="Phone Number" type="tel" name="phone" placeholder="+91 98765 43210" />
               <Field
@@ -269,11 +271,26 @@ export default function Register() {
 
 
               {/* Terms */}
-              <p className="text-[11px] text-stone-400 leading-[1.55] m-0">
-                By continuing you agree to our{" "}
-                <span className="text-orange-500 font-semibold cursor-pointer">Terms</span> and{" "}
-                <span className="text-orange-500 font-semibold cursor-pointer">Privacy Policy</span>.
-              </p>
+              <div className="flex items-start gap-2 mt-1">
+                <input
+                  type="checkbox"
+                  name="agree"
+                  checked={state.agree}
+                  onChange={inputHandle}
+                  className="mt-[2px] accent-orange-500 cursor-pointer"
+                />
+
+                <p className="text-[11px] text-stone-400 leading-[1.55] m-0">
+                  I agree to the{" "}
+                  <span className="text-orange-500 font-semibold cursor-pointer">
+                    Terms
+                  </span>{" "}
+                  and{" "}
+                  <span className="text-orange-500 font-semibold cursor-pointer">
+                    Privacy Policy
+                  </span>.
+                </p>
+              </div>
 
               {/* Submit */}
               <button
@@ -283,7 +300,7 @@ export default function Register() {
                 Create Account <HiOutlineArrowUpRight size={16} />
               </button>
 
-              
+
 
               {/* Sign in link */}
               <p className="text-center text-[0.82rem] text-stone-500 m-0">

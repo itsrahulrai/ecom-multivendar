@@ -50,7 +50,9 @@ const Divider = ({ label }) => (
 
 // ─── Input Field ──────────────────────────────────────────────────────────────
 
-const Field = ({ icon: Icon, label, type = "text", placeholder, toggleFn, showToggle }) => (
+const Field = ({ icon: Icon, label, type = "text", placeholder, name,
+  value,
+  onChange, toggleFn, showToggle }) => (
     <div>
         <label className="block text-[10px] font-bold tracking-[0.09em] uppercase text-stone-400 mb-[5px]">
             {label}
@@ -59,6 +61,9 @@ const Field = ({ icon: Icon, label, type = "text", placeholder, toggleFn, showTo
             <Icon size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
             <input
                 type={type}
+                name={name}
+                value={value}
+                onChange={onChange}
                 placeholder={placeholder}
                 className="w-full pl-[34px] pr-[34px] py-[9px] rounded-[10px] text-[0.84rem] text-stone-700 bg-[#faf8f5] border-2 border-[#e7e3dc] outline-none transition-all duration-150 placeholder:text-stone-300 focus:bg-white focus:border-orange-500 focus:ring-[3px] focus:ring-orange-500/10 box-border"
             />
@@ -168,10 +173,27 @@ const LeftPanel = () => (
 export default function Login() {
     const [showPass, setShowPass] = useState(false);
 
+    const [state, setState] = useState({
+        email: "",
+        password: "",
+    });
+
+    const inputHandle = (e) => {
+        setState({
+            ...state,
+            [e.target.name]: e.target.value,
+        });
+    }
+
+    const submitHandle = (e) => {
+        e.preventDefault();
+        console.log("STATE:", state);
+    }
+
+
+
     return (
         <div className="h-screen flex bg-[#f5f0e8]">
-
-
             {/* Left: Marketing panel (desktop only) */}
             <LeftPanel />
 
@@ -218,40 +240,48 @@ export default function Login() {
                     <Divider label="OR LOGIN WITH EMAIL" />
 
                     {/* Form fields */}
-                    <div className="flex flex-col gap-[10px] mt-[14px]">
-                        <Field
-                            icon={HiOutlineEnvelope}
-                            label="Email Address"
-                            type="email"
-                            placeholder="rahul@example.com"
-                        />
 
-                        <Field
-                            icon={HiOutlineLockClosed}
-                            label="Password"
-                            type={showPass ? "text" : "password"}
-                            placeholder="Enter your password"
-                            toggleFn={() => setShowPass(p => !p)}
-                            showToggle={showPass}
-                        />
+                    <form onSubmit={submitHandle}>
+                        <div className="flex flex-col gap-[10px] mt-[14px]">
+                            <Field
+                                icon={HiOutlineEnvelope}
+                                onChange={inputHandle}
+                                name="email"
+                                label="Email Address"
+                                type="email"
+                                placeholder="rahul@example.com"
+                            />
 
-                        <button
-                            type="submit"
-                            className="w-full flex items-center justify-center gap-[7px] bg-stone-900 hover:bg-stone-800 active:scale-[0.98] text-white font-bold text-[0.875rem] py-[13px] rounded-xl transition-all duration-200"
-                        >
-                            Login <HiOutlineArrowUpRight size={16} />
-                        </button>
+                            <Field
+                                icon={HiOutlineLockClosed}
+                                label="Password"
+                                onChange={inputHandle}
+                                name="password"
+                                type={showPass ? "text" : "password"}
+                                placeholder="Enter your password"
+                                toggleFn={() => setShowPass(p => !p)}
+                                showToggle={showPass}
+                            />
 
-                        <p className="text-center text-[0.82rem] text-stone-500 m-0">
-                            Don’t have an account?{" "}
-                            <Link
-                                to="/register"
-                                className="text-stone-900 font-extrabold border-b-2 border-orange-500 pb-[1px] hover:text-orange-600"
+                            <button
+                                type="submit"
+                                className="w-full flex items-center justify-center gap-[7px] bg-stone-900 hover:bg-stone-800 active:scale-[0.98] text-white font-bold text-[0.875rem] py-[13px] rounded-xl transition-all duration-200"
                             >
-                                Sign up
-                            </Link>
-                        </p>
-                    </div>
+                                Login <HiOutlineArrowUpRight size={16} />
+                            </button>
+
+                            <p className="text-center text-[0.82rem] text-stone-500 m-0">
+                                Don’t have an account?{" "}
+                                <Link
+                                    to="/register"
+                                    className="text-stone-900 font-extrabold border-b-2 border-orange-500 pb-[1px] hover:text-orange-600"
+                                >
+                                    Sign up
+                                </Link>
+                            </p>
+                        </div>
+
+                    </form>
 
                 </div>
             </div>
