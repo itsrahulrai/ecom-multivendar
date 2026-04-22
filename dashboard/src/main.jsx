@@ -16,7 +16,7 @@ createRoot(document.getElementById("root")).render(
 
           {/* Text */}
           <p className="text-sm text-stone-500 font-medium">
-            Loading your experience...
+            Loading...
           </p>
 
         </div>
