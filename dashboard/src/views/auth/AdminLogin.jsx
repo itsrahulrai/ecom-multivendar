@@ -1,7 +1,14 @@
 import { useState, useEffect } from "react";
+import {useDispatch} from "react-redux"
+import { admin_login } from "../../store/Reducers/authReducer";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2} from "lucide-react";
 
+
+
 export default function AdminLogin() {
+
+    const dispatch = useDispatch()
+
     const [showPass, setShowPass] = useState(false);
     const [loading, setLoading] = useState(false);
     const [mounted, setMounted] = useState(false);
@@ -19,8 +26,9 @@ export default function AdminLogin() {
 
     const submitHandle = (e) => {
         e.preventDefault();
+        dispatch(admin_login(state))
         setLoading(true);
-        console.log("Submitted data:", state);
+        // console.log("Submitted data:", state);
         
         setTimeout(() => setLoading(false), 2200);
     };
