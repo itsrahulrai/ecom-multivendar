@@ -1,5 +1,7 @@
 import adminModel from "../models/adminModel.js";
 import { responsReturn } from "../utiles/response.js";
+import createToken from "../utiles/tokenCreate.js";
+import bcrypt from 'bcrypt';
 
 class authControllers {
     async adminLogin (req, res) {
@@ -8,6 +10,21 @@ class authControllers {
         try {
             const admin = await adminModel.findOne({email}).select('+password')
             if(admin){
+                const match = await  bcrypt.compare(password,admin.password)
+                // console.log(match);
+                if(match){
+                    const token = await createToken({
+                        id : admin.id,
+                        role : admin.role
+                    })
+                    res.cookie('accessToken',token,{
+                        expires : new Date(Date.now() +7*24*60*60*1000 )
+                    })
+                    responsReturn(res, 200,{token, message:'Login Success'})
+
+                } else {
+                    responsReturn(res, 404,{error:'Password Wrong'})
+                }
 
             } else{
 
