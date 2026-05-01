@@ -9,11 +9,10 @@ const authMiddleware = async(req, res, next) => {
 
   try {
     const decodedToken = await jwt.verify(accessToken, process.env.SECRET);
-
     req.id = decodedToken.id;
     req.role = decodedToken.role;
-
     next();
+    
   } catch (error) {
     return res.status(401).json({ error: "Invalid or expired token" });
   }
