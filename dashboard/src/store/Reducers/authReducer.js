@@ -43,7 +43,7 @@ export const authReducer = createSlice({
 
       .addCase(admin_login.rejected, (state, { payload }) => {
         state.loader = false;
-        state.errorMessage = payload?.message || "Login failed";
+        state.errorMessage = payload?.error || payload?.message || "Login failed";
       });
   }
 });

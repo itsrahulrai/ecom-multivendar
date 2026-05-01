@@ -4,11 +4,14 @@ import { admin_login,clearMessages } from "../../store/Reducers/authReducer";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react";
 import { PropagateLoader } from "react-spinners";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+
 
 
 
 export default function AdminLogin() {
-
+ 
+  const navigate = useNavigate()
   const dispatch = useDispatch()
   const { loader, errorMessage, successMessage  } = useSelector(state => state.auth)
 
@@ -33,17 +36,16 @@ export default function AdminLogin() {
   };
 
 useEffect(() => {
-  if (errorMessage) {
-    toast.error(errorMessage);
-    dispatch(clearMessages())
-  }
-}, [errorMessage]);
-
-useEffect(() => {
+  if (errorMessage) toast.error(errorMessage);
   if (successMessage) {
     toast.success(successMessage);
+    navigate("/");
   }
-}, [successMessage]);
+
+  if (errorMessage || successMessage) {
+    dispatch(clearMessages());
+  }
+}, [errorMessage, successMessage]);
 
   return (
     <div className="min-h-screen flex bg-orange-50 font-sans">
