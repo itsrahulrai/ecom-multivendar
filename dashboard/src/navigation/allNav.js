@@ -24,17 +24,17 @@ export const allNav = [
       {
         label: "Category",
         icon: Tags,
-        to: "/admin/category",
+        to: "/admin/dashboard/category",
       },
       {
         label: "Sellers",
         icon: Users,
-        to: "/admin/sellers",
+        to: "/admin/dashboard/sellers",
       },
       {
         label: "Seller Request",
         icon: UserPlus,
-        to: "/admin/seller-request",
+        to: "/admin/dashboard/seller-request",
       },
     ],
   },
@@ -46,17 +46,17 @@ export const allNav = [
       {
         label: "Products",
         icon: Package,
-        to: "/admin/products",
+        to: "/admin/dashboard/products",
       },
       {
         label: "Orders",
         icon: ShoppingCart,
-        to: "/admin/orders",
+        to: "/admin/dashboard/orders",
       },
       {
         label: "Payment Request",
         icon: CreditCard,
-        to: "/admin/payment-request",
+        to: "/admin/dashboard/payment-request",
       },
     ],
   },
@@ -68,12 +68,12 @@ export const allNav = [
       {
         label: "Live Chat",
         icon: MessageCircle,
-        to: "/admin/live-chat",
+        to: "/admin/dashboard/live-chat",
       },
       {
         label: "Settings",
         icon: Settings,
-        to: "/admin/settings",
+        to: "/admin/dashboard/settings",
       },
     ],
   },
