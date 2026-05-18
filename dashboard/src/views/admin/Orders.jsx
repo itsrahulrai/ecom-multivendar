@@ -83,7 +83,6 @@ const Orders = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [searchValue, setSearchValue] = useState("");
     const [statusFilter, setStatusFilter] = useState("All");
-    const [selectedOrder, setSelectedOrder] = useState(null);
 
     const navigate = useNavigate();
 
@@ -112,6 +111,7 @@ const Orders = () => {
     );
 
     return (
+        
         <div className="space-y-6 pr-8">
             {/* ================= FILTER BAR ================= */}
             <div
@@ -414,6 +414,7 @@ const Orders = () => {
             </div>
 
         </div>
+
     );
 };
 
