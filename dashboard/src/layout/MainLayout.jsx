@@ -12,10 +12,10 @@ const MainLayout = () => {
             <Sidebar />
 
             {/* Right Side */}
-            <div className="flex-1 lg:ml-[260px] pt-[95px] flex flex-col">
+            <div className="flex-1 lg:ml-[260px] pt-[80px] flex flex-col">
 
                 {/* Page Content */}
-                <div className="flex-1 p-5">
+                <div className="flex-1 mb-2">
                     <Outlet />
                 </div>
             </div>
