@@ -31,11 +31,6 @@ export const allNav = [
         icon: Users,
         to: "/admin/dashboard/sellers",
       },
-      {
-        label: "Seller Request",
-        icon: UserPlus,
-        to: "/admin/dashboard/seller-request",
-      },
     ],
   },
 
