@@ -50,7 +50,7 @@ const Sidebar = () => {
   const location = useLocation();
 
   useEffect(() => {
-    const navs = getNav("admin");
+    const navs = getNav("seller");
     setAllNav(navs);
   }, []);
 

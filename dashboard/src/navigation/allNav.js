@@ -70,6 +70,55 @@ export const allNav = [
         icon: Settings,
         to: "/admin/dashboard/settings",
       },
+
+      
     ],
   },
+
+
+//Seller
+{
+  role: "seller",
+  section: "General",
+  items: [
+    {
+      label: "Dashboard",
+      icon: LayoutDashboard,
+      to: "/seller/dashboard",
+    },
+
+ 
+     {
+      label: "Products",
+      icon: Package,
+      to: "/seller/dashboard/products",
+    },
+    {
+      label: "Orders",
+      icon: Package,
+      to: "/seller/dashboard/orders",
+    },
+
+    {
+      label: "Payments",
+      icon: Package,
+      to: "/seller/dashboard/payments",
+    },
+
+    {
+      label: "Chat Customer",
+      icon: Package,
+      to: "/seller/dashboard/chat-customer",
+    },
+
+    {
+      label: "Chat Support",
+      icon: Package,
+      to: "/seller/dashboard/chat-support",
+    },
+  ],
+},
+
+  
+  
 ];
