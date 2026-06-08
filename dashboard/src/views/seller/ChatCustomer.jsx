@@ -38,6 +38,7 @@ const ChatCustomer = () => {
   const [selectedChat, setSelectedChat] = useState(customers[0]);
 
   return (
+      <div className="space-y-6 pr-8">
     <div className="h-[calc(100vh-120px)] bg-white rounded-[30px] overflow-hidden border border-slate-100 shadow-[0_10px_40px_rgba(0,0,0,0.05)]">
 
       <div className="grid grid-cols-12 h-full">
@@ -231,6 +232,7 @@ const ChatCustomer = () => {
 
       </div>
 
+    </div>
     </div>
   );
 };
