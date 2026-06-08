@@ -7,6 +7,7 @@ const Orders = lazy(() => import("../../views/seller/Orders"));
 const Payments = lazy(() => import("../../views/seller/Payments"));
 const ChatCustomer = lazy(() => import("../../views/seller/ChatCustomer"));
 const ChatSupport = lazy(() => import("../../views/seller/ChatSupport"));
+const Profile = lazy(() => import("../../views/seller/Profile"));
 
 export const sellerRoutes = [
   {
@@ -53,6 +54,12 @@ export const sellerRoutes = [
   {
     path: "/seller/dashboard/chat-support",
     element: createElement(ChatSupport),
+    role: "seller",
+    status: "active",
+  },
+  {
+    path: "/seller/dashboard/profile",
+    element: createElement(Profile),
     role: "seller",
     status: "active",
   },

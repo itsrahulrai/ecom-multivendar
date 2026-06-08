@@ -9,6 +9,7 @@ import {
   Boxes,
   MessageCircle,
   Settings,
+ UserCircle,
 } from "lucide-react";
 
 export const allNav = [
@@ -115,6 +116,11 @@ export const allNav = [
       label: "Chat Support",
       icon: Package,
       to: "/seller/dashboard/chat-support",
+    },
+    {
+      label: "Profile",
+      icon: UserCircle,
+      to: "/seller/dashboard/profile",
     },
   ],
 },
