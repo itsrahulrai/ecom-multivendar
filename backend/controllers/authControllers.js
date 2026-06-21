@@ -1,4 +1,6 @@
 import adminModel from "../models/adminModel.js";
+import sellerModel from "../models/sellerModel.js";
+import sellerCustomerModel from "../models/chat/sellerCustomerModel.js";
 import { responsReturn } from "../utiles/response.js";
 import createToken from "../utiles/tokenCreate.js";
 import bcrypt from 'bcrypt';
@@ -32,6 +34,38 @@ class authControllers {
             }         
         } catch (error) {
             responsReturn(res, 500,{error: error.message})
+        }
+    }
+
+    sellerRegister = async(req, res) => {
+        // console.log(req.body)
+        const {name,email,phone,password,agree} = req.body
+        try{
+            const getUser = await sellerModel.findOne({email})
+            if(getUser){
+                responsReturn(res,404,{error:'Email Already Exit'})
+            } else {
+                const seller = await sellerModel.create({
+                 name,
+                 email,
+                 phone,
+                 password: await bcrypt.hash(password,10),
+                 agree,
+                 method:'menually',
+                })
+                await  sellerCustomerModel.create({
+                    myId:seller.id,  
+                })
+                const token = await createToken({id: seller.id,role:seller.role})
+                res.cookie('accessToken',token,{
+                        expires : new Date(Date.now() +7*24*60*60*1000 )
+                    })
+
+                responsReturn(res,201,{token,message: 'Seller registered successfully'})
+            }
+        } catch (error){    
+                responsReturn(res,500,{error:'Internal server Error'})
+
         }
     }
 
