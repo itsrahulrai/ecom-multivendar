@@ -90,7 +90,7 @@ const Products = () => {
 
   return (
     <div className="space-y-6 pr-8">
-      {/* HEADER */}
+    {/* HEADER */}
       <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
         <div>
           <h2 className="text-3xl font-bold text-slate-800">
@@ -205,7 +205,7 @@ const Products = () => {
           {/* ADD BUTTON */}
           <button
             onClick={() =>
-              navigate("/admin/dashboard/create/product")
+              navigate("/seller/dashboard/create/product")
             }
             className="
               flex items-center gap-2
@@ -416,6 +416,9 @@ const Products = () => {
 
                   {/* EDIT */}
                   <button
+                  onClick={() =>
+                        navigate(`/seller/dashboard/edit/product/${product.id}`)
+                      }
                     className="
                       w-12 h-8 rounded-md
                       bg-amber-100

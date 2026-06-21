@@ -13,6 +13,23 @@ export const admin_login = createAsyncThunk(
   }
 );
 
+
+export const seller_register = createAsyncThunk(
+  'auth/seller_register',
+  async (info, { rejectWithValue, fulfillWithValue }) => {
+    try {
+      console.log(info)
+
+      const { data } = await api.post('/seller/register', info, { withCredentials: true })
+      localStorage.setItem('accessToken',data.token)
+      // console.log(data)
+      return fulfillWithValue(data);
+    } catch (error) {
+      return rejectWithValue(error.response?.data);
+    }
+  }
+);
+
 export const authReducer = createSlice({
   name: 'auth',
   initialState: {
@@ -41,11 +58,28 @@ export const authReducer = createSlice({
         state.userInfo = payload;
         state.successMessage = 'Login successful';
       })
-
       .addCase(admin_login.rejected, (state, { payload }) => {
         state.loader = false;
+        state.successMessage = ''; 
         state.errorMessage = payload?.error || payload?.message || "Login failed";
-      });
+      })
+
+      // Seller Register
+    .addCase(seller_register.pending, (state) => {
+      state.loader = true;
+      state.errorMessage = '';
+      state.successMessage = '';
+    })
+    .addCase(seller_register.fulfilled, (state, { payload }) => {
+      state.loader = false;
+      state.successMessage = ''; 
+      state.successMessage = payload.message;
+      state.userInfo = payload;
+    })
+    .addCase(seller_register.rejected, (state, { payload }) => {
+      state.loader = false;
+      state.errorMessage = payload?.error || payload?.message;
+    });
   }
 });
 

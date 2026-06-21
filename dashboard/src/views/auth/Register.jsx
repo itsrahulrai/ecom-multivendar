@@ -1,12 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
+import { Loader2 } from "lucide-react";
 import {
   HiOutlineUser, HiOutlineEnvelope, HiOutlinePhone,
   HiOutlineLockClosed, HiOutlineEye, HiOutlineEyeSlash,
   HiOutlineBuildingStorefront, HiOutlineArrowUpRight,
 } from "react-icons/hi2";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { seller_register,clearMessages } from "../../store/Reducers/authReducer";
+import { useNavigate } from "react-router-dom";
+
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -163,10 +169,16 @@ const LeftPanel = () => (
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function Register() {
+
+   const { loader, successMessage, errorMessage } = useSelector(state => state.auth)
+
+   const navigate = useNavigate()
+  const dispatch = useDispatch()
+
   const [showPass, setShowPass] = useState(false);
 
   const [state, setState] = useState({
-    fullName: "",
+    name: "",
     email: "",
     phone: "",
     password: "",
@@ -184,9 +196,22 @@ export default function Register() {
 
   const submitHandle = (e) => {
     e.preventDefault();
-    console.log("STATE:", state);
+    dispatch(seller_register(state))
   }
+  useEffect(() => {
+  if (errorMessage) {
+    toast.error(errorMessage);
+    dispatch(clearMessages());
+  }
+}, [errorMessage]);
 
+useEffect(() => {
+  if (successMessage) {
+    toast.success(successMessage);
+    navigate("/");
+    dispatch(clearMessages());
+  }
+}, [successMessage]);
 
   return (
     <div className="h-screen flex bg-[#f5f0e8]">
@@ -247,9 +272,9 @@ export default function Register() {
               <Field
                 icon={HiOutlineUser}
                 onChange={inputHandle}
-                value={state.fullName}
+                value={state.name}
                 label="Full Name"
-                name="fullName"
+                name="name"
                 placeholder="Rahul Sharma"
               />
               <Field
@@ -308,11 +333,30 @@ export default function Register() {
               {/* Submit */}
               <button
                 type="submit"
-                className="w-full flex items-center justify-center gap-[7px] bg-stone-900 hover:bg-stone-800 active:scale-[0.98] text-white font-bold text-[0.875rem] py-[13px] rounded-xl border-none cursor-pointer transition-all duration-200 hover:-translate-y-[1px] hover:shadow-[0_8px_20px_rgba(28,25,23,0.22)]"
+                disabled={loader}
+                className={`w-full flex items-center justify-center gap-[7px]
+                text-white font-bold text-[0.875rem] py-[13px]
+                rounded-xl border-none transition-all duration-200
+                ${
+                  loader
+                    ? "bg-stone-700 cursor-not-allowed"
+                    : "bg-stone-900 hover:bg-stone-800 cursor-pointer hover:-translate-y-[1px] hover:shadow-[0_8px_20px_rgba(28,25,23,0.22)]"
+                }`}
               >
-                Create Account <HiOutlineArrowUpRight size={16} />
+                {loader ? (
+                  <>
+                    <Loader2 className="animate-spin" size={18} />
+                    Creating Account...
+                  </>
+                ) : (
+                  <>
+                    Create Account
+                    <HiOutlineArrowUpRight size={16} />
+                  </>
+                )}
               </button>
 
+            
               {/* Sign in link */}
               <p className="text-center text-[0.82rem] text-stone-500 m-0">
                 Already have an account?{" "}

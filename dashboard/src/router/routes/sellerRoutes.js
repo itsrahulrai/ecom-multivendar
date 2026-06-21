@@ -3,6 +3,8 @@ import { lazy, createElement } from "react";
 const Home = lazy(() => import("../../views/Home"));
 const SellerDashboard = lazy(() => import("../../views/seller/SellerDashboard"));
 const Products = lazy(() => import("../../views/seller/Products"));
+const SelerAddProducts = lazy(() => import("../../views/seller/SellerAddProduct"));
+const SelerEditProducts = lazy(() => import("../../views/seller/SellerEditProduct"));
 const Orders = lazy(() => import("../../views/seller/Orders"));
 const Payments = lazy(() => import("../../views/seller/Payments"));
 const ChatCustomer = lazy(() => import("../../views/seller/ChatCustomer"));
@@ -28,6 +30,20 @@ export const sellerRoutes = [
     element: createElement(Products),
     role: "seller",
     status: "active",
+  },
+
+    {
+    path: 'seller/dashboard/create/product',
+    element: createElement(SelerAddProducts),
+    role: 'seller',
+    status: 'active'
+  },
+
+    {
+    path: 'seller/dashboard/edit/product',
+    element: createElement(SelerEditProducts),
+    role: 'seller',
+    status: 'active'
   },
 
   {
