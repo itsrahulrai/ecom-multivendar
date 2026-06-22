@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -10,6 +10,11 @@ import {
     HiOutlineBuildingStorefront,
     HiOutlineArrowUpRight,
 } from "react-icons/hi2";
+import { Loader2 } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { seller_login, clearMessages } from "../../store/Reducers/authReducer";
+import { PropagateLoader } from "react-spinners";
+import toast from "react-hot-toast";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -156,6 +161,10 @@ const LeftPanel = () => (
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function Login() {
+    
+    const dispatch = useDispatch()
+    const { loader, errorMessage, successMessage  } = useSelector(state => state.auth)
+        
     const [showPass, setShowPass] = useState(false);
 
     const [state, setState] = useState({
@@ -171,9 +180,24 @@ export default function Login() {
     }
 
     const submitHandle = (e) => {
-        e.preventDefault();
-        console.log("STATE:", state);
+         e.preventDefault();
+            dispatch(seller_login(state))
     }
+
+      useEffect(() => {
+        if (errorMessage) {
+            toast.error(errorMessage);
+            dispatch(clearMessages());
+        }
+        }, [errorMessage]);
+
+        useEffect(() => {
+        if (successMessage) {
+            toast.success(successMessage);
+            dispatch(clearMessages());
+        }
+        }, [successMessage]);
+
 
 
 
@@ -256,12 +280,21 @@ export default function Login() {
                   showToggle={showPass}
                 />
 
-                <button
-                  type="submit"
-                  className="w-full flex items-center justify-center gap-[7px] bg-stone-900 hover:bg-stone-800 active:scale-[0.98] text-white font-bold text-[0.875rem] py-[13px] rounded-xl transition-all duration-200"
-                >
-                  Login <HiOutlineArrowUpRight size={16} />
-                </button>
+               <button
+                disabled={loader}
+                type="submit"
+                className={`w-full flex items-center justify-center gap-2.5 py-4 rounded-xl text-white font-bold text-sm tracking-wide transition-all duration-200
+                ${loader
+                    ? "bg-orange-400 cursor-not-allowed"
+                    : "bg-orange-500 hover:bg-orange-600 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-orange-200 active:translate-y-0 active:shadow-none"
+                  }`}>
+                {loader ? (
+                  <Loader2 className="animate-spin" size={18} />
+                ) : (
+                  "Login"
+                )}
+              </button>
+
 
                 <p className="text-center text-[0.82rem] text-stone-500 m-0">
                   Don’t have an account?{" "}

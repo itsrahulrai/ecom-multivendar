@@ -208,7 +208,6 @@ export default function Register() {
 useEffect(() => {
   if (successMessage) {
     toast.success(successMessage);
-    navigate("/");
     dispatch(clearMessages());
   }
 }, [successMessage]);
