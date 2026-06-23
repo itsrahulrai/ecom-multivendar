@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { getNav } from "../navigation";
 import { Bell, LogOut } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
 
 // ── NavItem ─────────────────────────
 const NavItem = ({ item, active }) => {
@@ -46,11 +47,17 @@ const NavItem = ({ item, active }) => {
 
 // ── Sidebar ─────────────────────────
 const Sidebar = () => {
+
+  const dispatch = useDispatch()
+  const { role } = useSelector(state => state.auth);
+
+
+
   const [allNav, setAllNav] = useState([]);
   const location = useLocation();
 
   useEffect(() => {
-    const navs = getNav("seller");
+    const navs = getNav(role);
     setAllNav(navs);
   }, []);
 

@@ -3,8 +3,14 @@ import { lazy, createElement } from "react";
 const AdminLogin = lazy(() => import("../../views/auth/AdminLogin.jsx"));
 const Login = lazy(() => import("../../views/auth/Login.jsx"));
 const Register = lazy(() => import("../../views/auth/Register.jsx"));
+const Home = lazy(() => import("../../views/Home"));
+
 
 const publicRoutes = [
+  {
+    path: "/",
+    element: createElement(Home),
+  },
   {
     path: "/login",
     element: createElement(Login),

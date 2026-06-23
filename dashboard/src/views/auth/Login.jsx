@@ -15,6 +15,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { seller_login, clearMessages } from "../../store/Reducers/authReducer";
 import { PropagateLoader } from "react-spinners";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -162,6 +164,7 @@ const LeftPanel = () => (
 
 export default function Login() {
     
+   const navigate = useNavigate()
     const dispatch = useDispatch()
     const { loader, errorMessage, successMessage  } = useSelector(state => state.auth)
         
@@ -195,6 +198,8 @@ export default function Login() {
         if (successMessage) {
             toast.success(successMessage);
             dispatch(clearMessages());
+             navigate('/')
+
         }
         }, [successMessage]);
 

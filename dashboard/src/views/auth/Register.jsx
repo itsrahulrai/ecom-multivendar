@@ -202,6 +202,7 @@ export default function Register() {
   if (errorMessage) {
     toast.error(errorMessage);
     dispatch(clearMessages());
+    navigate('/')
   }
 }, [errorMessage]);
 
