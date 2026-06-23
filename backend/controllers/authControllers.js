@@ -6,7 +6,7 @@ import createToken from "../utiles/tokenCreate.js";
 import bcrypt from 'bcrypt';
 
 class authControllers {
-     adminLogin =  async (req, res) => {
+    adminLogin =  async (req, res) => {
         const {email,password} = req.body
         // res.send("Admin login working");
         try {
@@ -69,6 +69,37 @@ class authControllers {
         }
     }
 
+    sellerLogin =  async (req, res) => {
+        const {email,password} = req.body
+        // res.send("seller Login login working");
+        try {
+            const seller = await sellerModel.findOne({email}).select('+password')
+            if(seller){
+                const match = await  bcrypt.compare(password,seller.password)
+                // console.log(match);
+                if(match){
+                    const token = await createToken({
+                        id : seller.id,
+                        role : seller.role
+                    })
+                    res.cookie('accessToken',token,{
+                        expires : new Date(Date.now() +7*24*60*60*1000 )
+                    })
+                    responsReturn(res, 200,{token, message:'Login Success'})
+
+                } else {
+                    responsReturn(res, 404,{error:'Password Wrong'})
+                }
+
+            } else{
+
+            responsReturn(res, 404,{error:'Email not Found'})
+            }         
+        } catch (error) {
+            responsReturn(res, 500,{error: error.message})
+        }
+    }
+
      getUser = async(req, res) => {
         const {id,role} = req;
         try {
@@ -76,12 +107,16 @@ class authControllers {
                 const user = await adminModel.findById(id)
                 responsReturn(res,200,{userInfo : user})
             }else{
-                console.log('Seller Info')
+                 const seller = await sellerModel.findById(id)
+                responsReturn(res,200,{userInfo : seller})
             }
             
         } catch (error) {
-            console.log(error.message)
-        }
+    console.log(error);
+    responsReturn(res,500,{
+        error : error.message
+    })
+}
     }
     //End getUser Method
 }
