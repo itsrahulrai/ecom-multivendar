@@ -1,5 +1,6 @@
 import { lazy, createElement } from "react";
 
+const Unauthorized = lazy(() => import("../../views/Unauthorized.jsx"));
 const AdminLogin = lazy(() => import("../../views/auth/AdminLogin.jsx"));
 const Login = lazy(() => import("../../views/auth/Login.jsx"));
 const Register = lazy(() => import("../../views/auth/Register.jsx"));
@@ -22,6 +23,10 @@ const publicRoutes = [
   {
     path: "/admin/login",
     element: createElement(AdminLogin),
+  },
+  {
+    path: "/unauthorized",
+    element: createElement(Unauthorized),
   },
 ];
 
