@@ -3,11 +3,10 @@ import CategoryDrawer from "./CategoryDrawer";
 import {
   Trash2,
   Plus,
-  X,
   Pencil,
+  Search,
 } from "lucide-react";
 import Pagination from "../Pagination";
-
 
 const categoriesData = [
   {
@@ -98,58 +97,90 @@ const categoriesData = [
 
 const Category = () => {
   const [currentPage, setCurrentPage] = useState(1);
-
   const [openDrawer, setOpenDrawer] = useState(false);
   const [editData, setEditData] = useState(null);
+  const [search, setSearch] = useState("");
 
-  const [formData, setFormData] = useState({
-    name: "",
-    image: "",
-    status: "Active",
-  });
+  // for Form data
+    const [formData, setFormData] = useState({
+      name: "",
+      image: null,
+      preview: "",
+      status: "Active",
+    });
+
+
+  const imageHandle = (e) => {
+  const file = e.target.files?.[0];
+
+  if (!file) return;
+
+  // Allow only images
+  if (!file.type.startsWith("image/")) {
+    alert("Please select a valid image.");
+    return;
+  }
+
+  setFormData((prev) => ({
+    ...prev,
+    image: file,
+    preview: URL.createObjectURL(file),
+  }));
+};
+
+
 
   const perPage = 8;
 
-  const paginatedCategories = categoriesData.slice(
+  const filteredCategories = categoriesData.filter((category) =>
+    category.name.toLowerCase().includes(search.toLowerCase()) ||
+    category.id.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const paginatedCategories = filteredCategories.slice(
     (currentPage - 1) * perPage,
     currentPage * perPage
   );
 
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+    setCurrentPage(1);
+  };
+
+ 
   const handleOpenCreate = () => {
-    setEditData(null);
+  setEditData(null);
 
-    setFormData({
-      name: "",
-      image: "",
-      status: "Active",
-    });
+  setFormData({
+    name: "",
+    image: null,
+    preview: "",
+    status: "Active",
+  });
 
-    setOpenDrawer(true);
-  };
+  setOpenDrawer(true);
+};
 
-  const handleEdit = (category) => {
-    setEditData(category);
 
-    setFormData({
-      name: category.name,
-      image: category.image,
-      status: category.status,
-    });
+const handleEdit = (category) => {
+  setEditData(category);
 
-    setOpenDrawer(true);
-  };
+  setFormData({
+    name: category.name,
+    image: null,
+    preview: category.image,
+    status: category.status,
+  });
+
+  setOpenDrawer(true);
+};
 
   return (
     <div className="space-y-6 pr-8">
-
-      {/* HEADER */}
+      {/* Header */}
       <div className="flex items-center justify-between">
-
         <div>
-          <h2 className="text-2xl font-bold text-slate-800">
-            Categories
-          </h2>
-
+          <h2 className="text-2xl font-bold text-slate-800">Categories</h2>
           <p className="text-sm text-slate-500 mt-1">
             Manage all product categories
           </p>
@@ -157,47 +188,35 @@ const Category = () => {
 
         <button
           onClick={handleOpenCreate}
-          className="
-            flex items-center gap-2
-            px-5 py-3
-            rounded-2xl
-            bg-gradient-to-r from-[#F54900] to-orange-500
-            text-white
-            text-sm font-semibold
-            shadow-lg shadow-orange-200
-            hover:scale-105
-            transition-all
-          "
+          className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-[#F54900] to-orange-500 text-white text-sm font-semibold shadow-lg shadow-orange-200 hover:scale-105 transition-all"
         >
           <Plus size={18} />
           New Category
         </button>
-
       </div>
 
-      {/* TABLE */}
-      <div
-        className="
-          overflow-hidden
-          rounded-[20px]
-          border border-white/60
-          bg-white/80
-          backdrop-blur-xl
-          shadow-[0_20px_60px_rgba(0,0,0,0.04)]
-        "
-      >
+      {/* Search */}
+      <div className="flex justify-end">
+        <div className="relative w-full max-w-sm">
+          <Search
+            size={18}
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+          />
 
+          <input
+            type="text"
+            value={search}
+            onChange={handleSearch}
+            placeholder="Search category..."
+            className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+          />
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="overflow-hidden rounded-[20px] border border-white/60 bg-white/80 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.04)]">
         {/* Header */}
-        <div
-          className="
-            grid grid-cols-5
-            gap-4
-            px-6 py-5
-            border-b border-slate-100
-            bg-slate-50/70
-            text-xs font-bold uppercase tracking-wider text-slate-400
-          "
-        >
+        <div className="grid grid-cols-5 gap-4 px-6 py-5 border-b border-slate-100 bg-slate-50/70 text-xs font-bold uppercase tracking-wider text-slate-400">
           <div>S.NO</div>
           <div>Image</div>
           <div>Name</div>
@@ -205,156 +224,100 @@ const Category = () => {
           <div className="text-right">Action</div>
         </div>
 
-        {/* Rows */}
+        {/* Body */}
         <div className="divide-y divide-slate-100">
+          {paginatedCategories.length > 0 ? (
+            paginatedCategories.map((category, index) => (
+              <div
+                key={category.id}
+                className="grid grid-cols-5 gap-4 items-center px-6 py-5 hover:bg-orange-50/40 transition-all"
+              >
+                <div className="text-sm font-semibold text-slate-600">
+                  {(currentPage - 1) * perPage + index + 1}
+                </div>
 
-          {paginatedCategories.map((category, index) => (
+                <div>
+                  <img
+                    src={category.image}
+                    alt={category.name}
+                    className="w-14 h-14 rounded-2xl object-cover border border-slate-200"
+                  />
+                </div>
 
-            <div
-              key={index}
-              className="
-                grid grid-cols-5
-                gap-4
-                items-center
-                px-6 py-5
-                hover:bg-orange-50/40
-                transition-all duration-300
-              "
-            >
+                <div>
+                  <h4 className="text-sm font-semibold text-slate-700">
+                    {category.name}
+                  </h4>
+                  <p className="text-xs text-slate-400">{category.id}</p>
+                </div>
 
-              {/* S.NO */}
-              <div className="text-sm font-semibold text-slate-600">
-                {index + 1}
-              </div>
-
-              {/* Image */}
-              <div>
-                <img
-                  src={category.image}
-                  alt=""
-                  className="
-                    w-14 h-14
-                    rounded-2xl
-                    object-cover
-                    border border-slate-200
-                  "
-                />
-              </div>
-
-              {/* Name */}
-              <div>
-                <h4 className="text-sm font-semibold text-slate-700">
-                  {category.name}
-                </h4>
-
-                <p className="text-xs text-slate-400">
-                  {category.id}
-                </p>
-              </div>
-
-              {/* Status */}
-              <div className="flex items-center">
-
-                <button
-                  className={`
-                    relative w-10 h-5 rounded-full transition-all duration-300
-                    ${
+                <div>
+                  <button
+                    className={`relative w-10 h-5 rounded-full transition-all ${
                       category.status === "Active"
                         ? "bg-emerald-500"
                         : "bg-slate-300"
-                    }
-                  `}
-                >
-                  <span
-                    className={`
-                      absolute top-[2px] left-[2px]
-                      w-4 h-4 rounded-full bg-white shadow-sm
-                      transition-all duration-300
-                      ${
+                    }`}
+                  >
+                    <span
+                      className={`absolute top-[2px] left-[2px] w-4 h-4 rounded-full bg-white transition-all ${
                         category.status === "Active"
                           ? "translate-x-5"
-                          : "translate-x-0"
-                      }
-                    `}
-                  />
-                </button>
+                          : ""
+                      }`}
+                    />
+                  </button>
+                </div>
 
+                <div className="flex justify-end gap-2">
+                  <button
+                    onClick={() => handleEdit(category)}
+                    className="w-9 h-9 rounded-md bg-amber-100 flex items-center justify-center text-amber-600 hover:bg-amber-500 hover:text-white transition-all"
+                  >
+                    <Pencil size={16} />
+                  </button>
+
+                  <button
+                    className="w-9 h-9 rounded-md bg-red-100 flex items-center justify-center text-red-600 hover:bg-red-500 hover:text-white transition-all"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               </div>
-
-              {/* Actions */}
-              <div className="flex justify-end gap-2">
-
-                <button
-                  onClick={() => handleEdit(category)}
-                  className="
-                    w-9 h-9 rounded-md
-                    bg-amber-100
-                    flex items-center justify-center
-                    text-amber-600
-                    hover:bg-amber-500
-                    hover:text-white
-                    transition-all
-                  "
-                >
-                  <Pencil size={16} />
-                </button>
-
-              
-
-                <button
-                  className="
-                    w-9 h-9 rounded-md
-                    bg-red-100
-                    flex items-center justify-center
-                    text-red-600
-                    hover:bg-red-500
-                    hover:text-white
-                    transition-all
-                  "
-                >
-                  <Trash2 size={16} />
-                </button>
-
-              </div>
-
+            ))
+          ) : (
+            <div className="py-20 text-center text-slate-500">
+              No categories found.
             </div>
-
-          ))}
-
+          )}
         </div>
 
         {/* Pagination */}
         <Pagination
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
-          totalItems={categoriesData.length}
+          totalItems={filteredCategories.length}
           perPage={perPage}
         />
-
       </div>
 
-     {/* DRAWER */}
-        <CategoryDrawer
-        openDrawer={openDrawer}
-        setOpenDrawer={setOpenDrawer}
-        editData={editData}
-        formData={formData}
-        setFormData={setFormData}
-        />
+      {/* Drawer */}
+     <CategoryDrawer
+      openDrawer={openDrawer}
+      setOpenDrawer={setOpenDrawer}
+      editData={editData}
+      formData={formData}
+      setFormData={setFormData}
+      imageHandle={imageHandle}
+    />
 
       {/* Overlay */}
       {openDrawer && (
         <div
           onClick={() => setOpenDrawer(false)}
-          className="
-            fixed inset-0
-            bg-black/30
-            backdrop-blur-sm
-            z-40
-          "
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
         />
       )}
-
     </div>
   );
 };

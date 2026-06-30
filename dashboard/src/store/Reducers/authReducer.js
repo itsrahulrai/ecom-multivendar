@@ -89,10 +89,10 @@ export const authReducer = createSlice({
     successMessage: '',
     errorMessage: '',
     loader: false,
-    userInfo: '',
+    userInfo: null,
     role: returnRole(localStorage.getItem('accessToken')),
     token: localStorage.getItem('accessToken')
-  },
+},
 
  reducers: {
   clearMessages: (state) => {
@@ -158,10 +158,18 @@ export const authReducer = createSlice({
         payload?.error || payload?.message || 'Login failed';
     })
 
+        .addCase(get_user_info.pending, (state) => {
+            state.loader = true;
+        })
+
     .addCase(get_user_info.fulfilled, (state, { payload }) => {
-      state.loader = false;
-      state.userInfo = payload;
-      state.successMessage = payload.message || 'Login successful';
+        state.loader = false;
+        state.userInfo = payload;
+    })
+
+    .addCase(get_user_info.rejected, (state) => {
+        state.loader = false;
+        state.userInfo = null;
     })
 
     

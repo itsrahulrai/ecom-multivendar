@@ -7,34 +7,27 @@ const CategoryDrawer = ({
   editData,
   formData,
   setFormData,
+  imageHandle,
 }) => {
   return (
     <>
-      {/* DRAWER */}
+      {/* Drawer */}
       <div
         className={`
           fixed top-0 right-0 z-50
           h-screen w-[420px]
           bg-white
           shadow-2xl
-          transition-all duration-300
           border-l border-slate-200
-          ${
-            openDrawer
-              ? "translate-x-0"
-              : "translate-x-full"
+          transition-all duration-300
+          ${openDrawer
+            ? "translate-x-0"
+            : "translate-x-full"
           }
         `}
       >
-
         {/* Header */}
-        <div
-          className="
-            flex items-center justify-between
-            p-6 border-b border-slate-100
-          "
-        >
-
+        <div className="flex items-center justify-between p-6 border-b border-slate-100">
           <div>
             <h3 className="text-2xl font-bold text-slate-800">
               {editData ? "Edit" : "Create"} Category
@@ -47,34 +40,22 @@ const CategoryDrawer = ({
 
           <button
             onClick={() => setOpenDrawer(false)}
-            className="
-              w-10 h-10 rounded-xl
-              bg-slate-100
-              flex items-center justify-center
-              hover:bg-red-100
-              hover:text-red-500
-              transition-all
-            "
+            className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center hover:bg-red-100 hover:text-red-500 transition-all"
           >
             <X size={18} />
           </button>
-
         </div>
 
         {/* Form */}
         <div className="p-6 space-y-6">
-
-          {/* IMAGE */}
+          {/* Image */}
           <div>
-
             <label className="text-sm font-semibold text-slate-700">
               Category Image
             </label>
 
             <div className="mt-4 flex justify-center">
-
               <div className="relative group">
-
                 {/* Preview */}
                 <div
                   className="
@@ -85,16 +66,14 @@ const CategoryDrawer = ({
                     bg-slate-100
                   "
                 >
-
                   <img
                     src={
-                      formData.image ||
+                      formData.preview ||
                       "https://via.placeholder.com/300x300?text=Upload"
                     }
-                    alt=""
+                    alt="Category"
                     className="w-full h-full object-cover"
                   />
-
                 </div>
 
                 {/* Upload */}
@@ -110,36 +89,21 @@ const CategoryDrawer = ({
                     cursor-pointer
                   "
                 >
-
                   <Plus size={18} />
 
                   <input
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-
-                      if (file) {
-                        setFormData({
-                          ...formData,
-                          image: URL.createObjectURL(file),
-                        });
-                      }
-                    }}
+                    onChange={imageHandle}
                   />
-
                 </label>
-
               </div>
-
             </div>
-
           </div>
 
-          {/* NAME */}
+          {/* Category Name */}
           <div>
-
             <label className="text-sm font-semibold text-slate-700">
               Category Name
             </label>
@@ -148,10 +112,10 @@ const CategoryDrawer = ({
               type="text"
               value={formData.name}
               onChange={(e) =>
-                setFormData({
-                  ...formData,
+                setFormData((prev) => ({
+                  ...prev,
                   name: e.target.value,
-                })
+                }))
               }
               placeholder="Enter category name"
               className="
@@ -164,12 +128,10 @@ const CategoryDrawer = ({
                 focus:border-orange-400
               "
             />
-
           </div>
 
-          {/* STATUS */}
+          {/* Status */}
           <div>
-
             <label className="text-sm font-semibold text-slate-700">
               Status
             </label>
@@ -177,10 +139,10 @@ const CategoryDrawer = ({
             <select
               value={formData.status}
               onChange={(e) =>
-                setFormData({
-                  ...formData,
+                setFormData((prev) => ({
+                  ...prev,
                   status: e.target.value,
-                })
+                }))
               }
               className="
                 w-full mt-3
@@ -195,18 +157,19 @@ const CategoryDrawer = ({
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
             </select>
-
           </div>
 
-          {/* BUTTONS */}
+          {/* Buttons */}
           <div className="flex gap-3 pt-4">
-
             <button
               onClick={() => setOpenDrawer(false)}
               className="
-                flex-1 py-3 rounded-2xl
+                flex-1
+                py-3
+                rounded-2xl
                 border border-slate-200
-                text-slate-600 font-semibold
+                text-slate-600
+                font-semibold
               "
             >
               Cancel
@@ -214,30 +177,25 @@ const CategoryDrawer = ({
 
             <button
               className="
-                flex-1 py-3 rounded-2xl
+                flex-1
+                py-3
+                rounded-2xl
                 bg-gradient-to-r from-[#F54900] to-orange-500
-                text-white font-semibold
+                text-white
+                font-semibold
               "
             >
               {editData ? "Update" : "Create"}
             </button>
-
           </div>
-
         </div>
-
       </div>
 
       {/* Overlay */}
       {openDrawer && (
         <div
           onClick={() => setOpenDrawer(false)}
-          className="
-            fixed inset-0
-            bg-black/30
-            backdrop-blur-sm
-            z-40
-          "
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
         />
       )}
     </>
