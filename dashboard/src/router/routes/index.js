@@ -4,7 +4,7 @@ import MainLayout from '../../layout/MainLayout.jsx';
 import ProtectRoute from './ProtectRoute.jsx';
 
 privateRoutes.forEach(r => {
-    // console.log(r)
+    console.log(r)
     r.element = createElement(
         ProtectRoute,
         { route: r },
