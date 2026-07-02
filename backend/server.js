@@ -4,6 +4,7 @@ import cors from "cors";
 import bodyParsern from "body-parser"
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/authRoutes.js";
+import categoryRoutes from "./routes/dashboard/categoryRoutes.js";
 import { dbConnect } from "./utiles/db.js";
 dotenv.config();
 const app = express();
@@ -19,6 +20,7 @@ app.use(cors({
 app.use(bodyParsern.json()))
 app.use(cookieParser())
 app.use('/api',authRoutes)
+app.use('/api',categoryRoutes)
 
 
 
