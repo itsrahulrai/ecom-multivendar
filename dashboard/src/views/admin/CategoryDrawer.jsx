@@ -1,5 +1,7 @@
 import React from "react";
 import { X, Plus } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { categoryAdd } from "../../store/Reducers/CategoryReducer";
 
 const CategoryDrawer = ({
   openDrawer,
@@ -9,6 +11,18 @@ const CategoryDrawer = ({
   setFormData,
   imageHandle,
 }) => {
+
+  const dispatch = useDispatch();
+ const { loader } = useSelector((state) => state.category);
+  const addCategory = async (e) => {
+  e.preventDefault();
+
+
+  const result = await dispatch(categoryAdd(formData));
+
+  console.log(result);
+};
+
   return (
     <>
       {/* Drawer */}
@@ -39,6 +53,7 @@ const CategoryDrawer = ({
           </div>
 
           <button
+          
             onClick={() => setOpenDrawer(false)}
             className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center hover:bg-red-100 hover:text-red-500 transition-all"
           >
@@ -47,7 +62,7 @@ const CategoryDrawer = ({
         </div>
 
         {/* Form */}
-        <div className="p-6 space-y-6">
+        <form onSubmit={addCategory}  className="p-6 space-y-6">
           {/* Image */}
           <div>
             <label className="text-sm font-semibold text-slate-700">
@@ -162,6 +177,7 @@ const CategoryDrawer = ({
           {/* Buttons */}
           <div className="flex gap-3 pt-4">
             <button
+              type="button"
               onClick={() => setOpenDrawer(false)}
               className="
                 flex-1
@@ -176,6 +192,7 @@ const CategoryDrawer = ({
             </button>
 
             <button
+              type="submit"
               className="
                 flex-1
                 py-3
@@ -188,7 +205,7 @@ const CategoryDrawer = ({
               {editData ? "Update" : "Create"}
             </button>
           </div>
-        </div>
+        </form>
       </div>
 
       {/* Overlay */}
