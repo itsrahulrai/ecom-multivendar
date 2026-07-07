@@ -1,7 +1,8 @@
-import React from "react";
-import { X, Plus } from "lucide-react";
+import React, { useEffect } from "react";
+import { X, Plus, Loader2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { categoryAdd } from "../../store/Reducers/CategoryReducer";
+import { categoryAdd, clearMessages, } from "../../store/Reducers/CategoryReducer";
+import toast from "react-hot-toast";
 
 const CategoryDrawer = ({
   openDrawer,
@@ -12,16 +13,36 @@ const CategoryDrawer = ({
   imageHandle,
 }) => {
 
-  const dispatch = useDispatch();
- const { loader } = useSelector((state) => state.category);
-  const addCategory = async (e) => {
-  e.preventDefault();
-
-
-  const result = await dispatch(categoryAdd(formData));
-
-  console.log(result);
+ const INITIAL_FORM = {
+  name: "",
+  status: "Active",
+  image: null,
+  preview: "",
 };
+
+const dispatch = useDispatch();
+const { loader, successMessage, errorMessage } = useSelector(
+  ({ category }) => category
+);
+const addCategory = (e) => {
+  e.preventDefault();
+  dispatch(categoryAdd(formData));
+};
+
+useEffect(() => {
+  if (!successMessage && !errorMessage) return;
+
+  successMessage
+    ? toast.success(successMessage)
+    : toast.error(errorMessage);
+
+  if (successMessage) {
+    setOpenDrawer(false);
+    setFormData(INITIAL_FORM);
+  }
+
+  dispatch(clearMessages());
+}, [successMessage, errorMessage]);
 
   return (
     <>
@@ -53,7 +74,7 @@ const CategoryDrawer = ({
           </div>
 
           <button
-          
+
             onClick={() => setOpenDrawer(false)}
             className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center hover:bg-red-100 hover:text-red-500 transition-all"
           >
@@ -62,7 +83,7 @@ const CategoryDrawer = ({
         </div>
 
         {/* Form */}
-        <form onSubmit={addCategory}  className="p-6 space-y-6">
+        <form onSubmit={addCategory} className="p-6 space-y-6">
           {/* Image */}
           <div>
             <label className="text-sm font-semibold text-slate-700">
@@ -72,23 +93,27 @@ const CategoryDrawer = ({
             <div className="mt-4 flex justify-center">
               <div className="relative group">
                 {/* Preview */}
+
                 <div
                   className="
-                    w-32 h-32
-                    rounded-3xl
-                    overflow-hidden
-                    border-2 border-dashed border-orange-300
-                    bg-slate-100
-                  "
-                >
-                  <img
-                    src={
-                      formData.preview ||
-                      "https://via.placeholder.com/300x300?text=Upload"
-                    }
-                    alt="Category"
-                    className="w-full h-full object-cover"
-                  />
+                      w-32 h-32
+                      rounded-3xl
+                      overflow-hidden
+                      border-2 border-dashed border-orange-300
+                      bg-slate-100
+                      flex items-center justify-center
+                    ">
+                  {formData.preview ? (
+                    <img
+                      src={formData.preview}
+                      alt="Category"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center text-slate-400">
+                      <span className="text-xs mt-2">Upload Image</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Upload */}
@@ -193,16 +218,24 @@ const CategoryDrawer = ({
 
             <button
               type="submit"
-              className="
-                flex-1
-                py-3
-                rounded-2xl
-                bg-gradient-to-r from-[#F54900] to-orange-500
-                text-white
-                font-semibold
-              "
+              disabled={loader}
+              className={`
+                      flex-1
+                      py-3
+                      rounded-2xl
+                      text-white
+                      font-semibold
+                      transition-all
+                      ${loader
+                  ? "bg-orange-300 cursor-not-allowed"
+                  : "bg-gradient-to-r from-[#F54900] to-orange-500"
+                }`}
             >
-              {editData ? "Update" : "Create"}
+              {loader ? (
+                <Loader2 className="mx-auto animate-spin" size={20} />
+              ) : (
+                editData ? "Update" : "Create"
+              )}
             </button>
           </div>
         </form>

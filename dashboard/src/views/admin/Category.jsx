@@ -1,101 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CategoryDrawer from "./CategoryDrawer";
 import {
   Trash2,
   Plus,
   Pencil,
-  Search,
 } from "lucide-react";
 import Pagination from "../Pagination";
+import Search from "../../components/Search";
+import { useDispatch, useSelector } from "react-redux";
+import { getCategory } from "../../store/Reducers/CategoryReducer";
 
-const categoriesData = [
-  {
-    id: "#CAT-101",
-    image:
-      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=200",
-    name: "Electronics",
-    status: "Active",
-  },
-  {
-    id: "#CAT-102",
-    image:
-      "https://images.unsplash.com/photo-1445205170230-053b83016050?w=200",
-    name: "Fashion",
-    status: "Active",
-  },
-  {
-    id: "#CAT-103",
-    image:
-      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=200",
-    name: "Furniture",
-    status: "Inactive",
-  },
-  {
-    id: "#CAT-104",
-    image:
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=200",
-    name: "Clothing",
-    status: "Active",
-  },
-  {
-    id: "#CAT-105",
-    image:
-      "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=200",
-    name: "Beauty",
-    status: "Active",
-  },
-  {
-    id: "#CAT-106",
-    image:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200",
-    name: "Accessories",
-    status: "Inactive",
-  },
-  {
-    id: "#CAT-107",
-    image:
-      "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=200",
-    name: "Shoes",
-    status: "Active",
-  },
-  {
-    id: "#CAT-108",
-    image:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200",
-    name: "Sports",
-    status: "Active",
-  },
-  {
-    id: "#CAT-109",
-    image:
-      "https://images.unsplash.com/photo-1511556820780-d912e42b4980?w=200",
-    name: "Watches",
-    status: "Inactive",
-  },
-  {
-    id: "#CAT-110",
-    image:
-      "https://images.unsplash.com/photo-1503602642458-232111445657?w=200",
-    name: "Bags",
-    status: "Active",
-  },
-  {
-    id: "#CAT-111",
-    image:
-      "https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=200",
-    name: "Jewelry",
-    status: "Active",
-  },
-  {
-    id: "#CAT-112",
-    image:
-      "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=200",
-    name: "Home Decor",
-    status: "Inactive",
-  },
-];
+
 
 const Category = () => {
+  const dispatch = useDispatch();
+
+const {
+  categorys,
+  totalCategory,
+  loader,
+} = useSelector((state) => state.category);
   const [currentPage, setCurrentPage] = useState(1);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [editData, setEditData] = useState(null);
@@ -132,21 +56,15 @@ const Category = () => {
 
   const perPage = 8;
 
-  const filteredCategories = categoriesData.filter((category) =>
-    category.name.toLowerCase().includes(search.toLowerCase()) ||
-    category.id.toLowerCase().includes(search.toLowerCase())
+useEffect(() => {
+  dispatch(
+    getCategory({
+      page: currentPage,
+      perPage,
+      searchValue: search,
+    })
   );
-
-  const paginatedCategories = filteredCategories.slice(
-    (currentPage - 1) * perPage,
-    currentPage * perPage
-  );
-
-  const handleSearch = (e) => {
-    setSearch(e.target.value);
-    setCurrentPage(1);
-  };
-
+}, [dispatch, currentPage, perPage, search]);
  
   const handleOpenCreate = () => {
   setEditData(null);
@@ -196,21 +114,15 @@ const handleEdit = (category) => {
       </div>
 
       {/* Search */}
-      <div className="flex justify-end">
-        <div className="relative w-full max-w-sm">
-          <Search
-            size={18}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-          />
-
-          <input
-            type="text"
-            value={search}
-            onChange={handleSearch}
-            placeholder="Search category..."
-            className="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
-          />
-        </div>
+     <div className="flex justify-end">
+        <Search
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setCurrentPage(1);
+          }}
+          placeholder="Search category..."
+        />
       </div>
 
       {/* Table */}
@@ -226,10 +138,10 @@ const handleEdit = (category) => {
 
         {/* Body */}
         <div className="divide-y divide-slate-100">
-          {paginatedCategories.length > 0 ? (
-            paginatedCategories.map((category, index) => (
+          {categorys.length > 0 ? (
+            categorys.map((category, index) => (
               <div
-                key={category.id}
+               key={category._id}
                 className="grid grid-cols-5 gap-4 items-center px-6 py-5 hover:bg-orange-50/40 transition-all"
               >
                 <div className="text-sm font-semibold text-slate-600">
@@ -248,7 +160,7 @@ const handleEdit = (category) => {
                   <h4 className="text-sm font-semibold text-slate-700">
                     {category.name}
                   </h4>
-                  <p className="text-xs text-slate-400">{category.id}</p>
+                  <p className="text-xs text-slate-400">{category.slug}</p>
                 </div>
 
                 <div>
@@ -296,7 +208,7 @@ const handleEdit = (category) => {
         <Pagination
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
-          totalItems={filteredCategories.length}
+          totalItems={totalCategory}
           perPage={perPage}
         />
       </div>
@@ -310,16 +222,8 @@ const handleEdit = (category) => {
       setFormData={setFormData}
       imageHandle={imageHandle}
     />
-
-      {/* Overlay */}
-      {openDrawer && (
-        <div
-          onClick={() => setOpenDrawer(false)}
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
-        />
-      )}
     </div>
   );
 };
 
-export default Category;
+export default Category

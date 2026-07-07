@@ -8,7 +8,7 @@ const Pagination = ({
     currentPage,
     setCurrentPage,
     totalItems,
-    perPage,
+    perPage, 
 }) => {
 
     const totalPages = Math.ceil(totalItems / perPage);
