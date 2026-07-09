@@ -40,7 +40,7 @@ export const getCategory  = createAsyncThunk(
         },
         withCredentials: true,
       });
-      console.log(data);
+      console.log("Data Displayed",data);
 
       return fulfillWithValue(data);
     } catch (error) {
@@ -57,6 +57,7 @@ export const categoryReducer = createSlice({
   loader: false,
 
   categorys: [],
+  pagination: {},
   totalCategory: 0,
   totalPage: 0,
 },
@@ -91,11 +92,15 @@ extraReducers: (builder) => {
       state.errorMessage = "";
     })
     .addCase(getCategory.fulfilled, (state, { payload }) => {
-      state.loader = false;
-      state.categorys = payload.categories;
-      state.totalCategory = payload.totalCategory;
-      state.totalPage = payload.totalPage;
-    })
+        state.loader = false;
+
+        state.categorys = payload.categorys;
+        state.pagination = payload.pagination;
+
+        // Optional (for backward compatibility)
+        state.totalCategory = payload.pagination.totalItems;
+        state.totalPage = payload.pagination.totalPages;
+      })
     .addCase(getCategory.rejected, (state, { payload }) => {
       state.loader = false;
       state.errorMessage = payload?.message || "Something went wrong";

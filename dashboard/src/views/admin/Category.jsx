@@ -10,16 +10,17 @@ import Search from "../../components/Search";
 import { useDispatch, useSelector } from "react-redux";
 import { getCategory } from "../../store/Reducers/CategoryReducer";
 
-
-
 const Category = () => {
   const dispatch = useDispatch();
 
 const {
   categorys,
-  totalCategory,
-  loader,
+  pagination,
+  successMessage,
 } = useSelector((state) => state.category);
+
+const perPage = 10;
+
   const [currentPage, setCurrentPage] = useState(1);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [editData, setEditData] = useState(null);
@@ -53,9 +54,6 @@ const {
 };
 
 
-
-  const perPage = 8;
-
 useEffect(() => {
   dispatch(
     getCategory({
@@ -65,6 +63,20 @@ useEffect(() => {
     })
   );
 }, [dispatch, currentPage, perPage, search]);
+
+useEffect(() => {
+  if (!successMessage) return;
+
+  dispatch(
+    getCategory({
+      page: currentPage,
+      perPage,
+      searchValue: search,
+    })
+  );
+}, [successMessage, currentPage, perPage, search, dispatch]);
+
+
  
   const handleOpenCreate = () => {
   setEditData(null);
@@ -138,7 +150,7 @@ const handleEdit = (category) => {
 
         {/* Body */}
         <div className="divide-y divide-slate-100">
-          {categorys.length > 0 ? (
+          {categorys?.length > 0 ? (
             categorys.map((category, index) => (
               <div
                key={category._id}
@@ -204,13 +216,12 @@ const handleEdit = (category) => {
           )}
         </div>
 
-        {/* Pagination */}
-        <Pagination
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          totalItems={totalCategory}
-          perPage={perPage}
-        />
+        {/* Pagination */}<Pagination
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            totalItems={pagination?.totalItems ?? 0}
+            perPage={pagination?.perPage ?? perPage}
+          />
       </div>
 
       {/* Drawer */}
