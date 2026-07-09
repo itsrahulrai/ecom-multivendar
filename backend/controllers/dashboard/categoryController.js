@@ -5,28 +5,80 @@ import slugify from "slugify";
 
 class categoryController {
 
-    getCategory =  async (req, res) => {
-        const {page, searchValue,perPage} = req.query
-        const skipPage = parseInt(perPage) * (parseInt(page) -1)
+    // getCategory =  async (req, res) => {
+    //     const {page, searchValue,perPage} = req.query
+    //     const skipPage = parseInt(perPage) * (parseInt(page) -1)
+    //     try {
+    //         if(searchValue && page && perPage){
+    //             const categorys = await CategoryModel.find({$text:{$search:searchValue}})
+    //             .skip(skipPage).limit(perPage).sort({createdAt: -1})
+    //             const totalCategory = await CategoryModel.find({$text:{$search:searchValue}}).countDocuments()
+    //             responsReturn(res,200,{categorys,totalCategory})
+    //         }
+    //         else if(searchValue === ''&& page && perPage ) {
+    //             const categorys = await CategoryModel.find({})
+    //             .skip(skipPage).limit(perPage).sort({createdAt: -1})
+    //               const totalCategory = await CategoryModel.find({}).countDocuments()
+    //             responsReturn(res,200,{categorys,totalCategory})
+    //         }
+    //         else {
+    //             const categorys = await CategoryModel.find({}).sort({createdAt: -1})
+    //              const totalCategory = await CategoryModel.find({}).countDocuments()
+    //             responsReturn(res,200,{categorys,totalCategory})  
+    //         }
+    //     } catch (error) {
+    //         console.log(error.message)
+    //     }
+    // }
+
+
+    getCategory = async (req, res) => {
         try {
-            if(searchValue){
-                const categorys = await CategoryModel.find({$text:{$search:searchValue}})
-                .skip(skipPage).limit(perPage).sort({createdAt: -1})
-                const totalCategory = await CategoryModel.find({$text:{$search:searchValue}}).countDocuments()
-                responsReturn(res,200,{categorys,totalCategory})
-            } else {
-                const categorys = await CategoryModel.find({}).skip(skipPage).limit(perPage).sort({createdAt: -1})
-                 const totalCategory = await CategoryModel.find({}).countDocuments()
-                 
+            const page = Math.max(parseInt(req.query.page) || 1, 1);
+            const perPage = Math.max(parseInt(req.query.perPage) || 10, 1);
+            const searchValue = (req.query.searchValue || "").trim();
+
+            const filter = {};
+
+            if (searchValue) {
+            filter.$text = { $search: searchValue };
             }
+
+            const totalCategory = await CategoryModel.countDocuments(filter);
+
+            const totalPages = Math.ceil(totalCategory / perPage);
+            const skip = (page - 1) * perPage;
+
+            const categorys = await CategoryModel.find(filter)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(perPage)
+            .lean();
+
+            return res.status(200).json({
+            success: true,
+            categorys,
+            pagination: {
+                page,
+                perPage,
+                totalItems: totalCategory,
+                totalPages,
+                hasNextPage: page < totalPages,
+                hasPrevPage: page > 1,
+            },
+            });
         } catch (error) {
-            
-        }
-    }
+            console.error(error);
 
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
 
-async addcategory(req, res) {
-    let uploaded;
+   addcategory = async (req, res) => {
+    let uploadedImage;
     try {
         const { name, status } = req.body;
         if (!name?.trim()) {
@@ -74,7 +126,8 @@ async addcategory(req, res) {
             error: error.message,
         });
     }
-}
+    }
+
 }
 
 export default new categoryController();
