@@ -5,10 +5,13 @@ import {
   Plus,
   Pencil,
 } from "lucide-react";
+import Swal from "sweetalert2";
 import Pagination from "../Pagination";
 import Search from "../../components/Search";
 import { useDispatch, useSelector } from "react-redux";
-import { getCategory } from "../../store/Reducers/CategoryReducer";
+import { getCategory,categoryDelete  } from "../../store/Reducers/CategoryReducer";
+import ConfirmModal from "../../components/confirmModal/ConfirmModal";
+
 
 const Category = () => {
   const dispatch = useDispatch();
@@ -25,6 +28,10 @@ const perPage = 10;
   const [openDrawer, setOpenDrawer] = useState(false);
   const [editData, setEditData] = useState(null);
   const [search, setSearch] = useState("");
+
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   // for Form data
     const [formData, setFormData] = useState({
@@ -103,6 +110,27 @@ const handleEdit = (category) => {
   });
 
   setOpenDrawer(true);
+};
+
+const handleDelete = (id) => {
+  setDeleteId(id);
+  setDeleteModal(true);
+};
+
+
+const confirmDelete = async () => {
+  try {
+    setDeleteLoading(true);
+
+    await dispatch(categoryDelete(deleteId)).unwrap();
+
+    setDeleteModal(false);
+    setDeleteId(null);
+  } catch (error) {
+    console.log(error);
+  } finally {
+    setDeleteLoading(false);
+  }
 };
 
   return (
@@ -201,11 +229,12 @@ const handleEdit = (category) => {
                     <Pencil size={16} />
                   </button>
 
-                  <button
-                    className="w-9 h-9 rounded-md bg-red-100 flex items-center justify-center text-red-600 hover:bg-red-500 hover:text-white transition-all"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                 <button
+                  onClick={() => handleDelete(category._id)}
+                  className="w-9 h-9 rounded-md bg-red-100 flex items-center justify-center text-red-600 hover:bg-red-500 hover:text-white transition-all"
+                >
+                  <Trash2 size={16} />
+                </button>
                 </div>
               </div>
             ))
@@ -233,6 +262,18 @@ const handleEdit = (category) => {
       setFormData={setFormData}
       imageHandle={imageHandle}
     />
+
+    <ConfirmModal
+          open={deleteModal}
+          loading={deleteLoading}
+          title="Delete Category"
+          message="Are you sure you want to delete this category? This action cannot be undone."
+          onClose={() => {
+            setDeleteModal(false);
+            setDeleteId(null);
+          }}
+          onConfirm={confirmDelete}
+        />
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { X, Plus, Loader2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { categoryAdd, clearMessages, } from "../../store/Reducers/CategoryReducer";
+import { categoryAdd, categoryUpdate, clearMessages, } from "../../store/Reducers/CategoryReducer";
 import toast from "react-hot-toast";
 
 const CategoryDrawer = ({
@@ -24,9 +24,19 @@ const dispatch = useDispatch();
 const { loader, successMessage, errorMessage } = useSelector(
   ({ category }) => category
 );
-const addCategory = (e) => {
-  e.preventDefault();
-  dispatch(categoryAdd(formData));
+const submitCategory = (e) => {
+    e.preventDefault();
+
+    if(editData){
+        dispatch(
+            categoryUpdate({
+                id: editData._id,
+                formData
+            })
+        );
+    }else{
+        dispatch(categoryAdd(formData));
+    }
 };
 
 useEffect(() => {
@@ -83,7 +93,7 @@ useEffect(() => {
         </div>
 
         {/* Form */}
-        <form onSubmit={addCategory} className="p-6 space-y-6">
+        <form onSubmit={submitCategory} className="p-6 space-y-6">
           {/* Image */}
           <div>
             <label className="text-sm font-semibold text-slate-700">
