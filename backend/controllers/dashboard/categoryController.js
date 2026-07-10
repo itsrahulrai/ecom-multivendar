@@ -5,33 +5,6 @@ import slugify from "slugify";
 
 class categoryController {
 
-    // getCategory =  async (req, res) => {
-    //     const {page, searchValue,perPage} = req.query
-    //     const skipPage = parseInt(perPage) * (parseInt(page) -1)
-    //     try {
-    //         if(searchValue && page && perPage){
-    //             const categorys = await CategoryModel.find({$text:{$search:searchValue}})
-    //             .skip(skipPage).limit(perPage).sort({createdAt: -1})
-    //             const totalCategory = await CategoryModel.find({$text:{$search:searchValue}}).countDocuments()
-    //             responsReturn(res,200,{categorys,totalCategory})
-    //         }
-    //         else if(searchValue === ''&& page && perPage ) {
-    //             const categorys = await CategoryModel.find({})
-    //             .skip(skipPage).limit(perPage).sort({createdAt: -1})
-    //               const totalCategory = await CategoryModel.find({}).countDocuments()
-    //             responsReturn(res,200,{categorys,totalCategory})
-    //         }
-    //         else {
-    //             const categorys = await CategoryModel.find({}).sort({createdAt: -1})
-    //              const totalCategory = await CategoryModel.find({}).countDocuments()
-    //             responsReturn(res,200,{categorys,totalCategory})  
-    //         }
-    //     } catch (error) {
-    //         console.log(error.message)
-    //     }
-    // }
-
-
     getCategory = async (req, res) => {
         try {
             const page = Math.max(parseInt(req.query.page) || 1, 1);
@@ -75,7 +48,7 @@ class categoryController {
       message: "Internal Server Error",
     });
   }
-};
+    }
 
    addcategory = async (req, res) => {
     let uploadedImage;
@@ -126,6 +99,117 @@ class categoryController {
             error: error.message,
         });
     }
+    }
+
+
+    updateCategory = async (req, res) => {
+    let uploadedImage;
+
+    try {
+        const { id } = req.params;
+        const { name, status } = req.body;
+
+        const category = await CategoryModel.findById(id);
+
+        if (!category) {
+            return responsReturn(res,404,{
+                error: "Category not found"
+            });
+        }
+
+        const slug = slugify(name,{
+            lower:true,
+            strict:true,
+            trim:true
+        });
+
+        const exists = await CategoryModel.findOne({
+            _id: { $ne: id },
+            $or:[
+                { name:name.trim() },
+                { slug }
+            ]
+        });
+
+        if(exists){
+            return responsReturn(res,409,{
+                error:"Category already exists"
+            });
+        }
+
+        let image = category.image;
+        let imageId = category.imageId;
+
+        if(req.file){
+
+            uploadedImage = await storage.upload(req.file,"categories");
+
+            if(category.imageId){
+                await storage.delete(category.imageId);
+            }
+
+            image = uploadedImage.url;
+            imageId = uploadedImage.fileId;
+        }
+
+        category.name = name.trim();
+        category.slug = slug;
+        category.status = status;
+        category.image = image;
+        category.imageId = imageId;
+
+        await category.save();
+
+        return responsReturn(res,200,{
+            message:"Category updated successfully",
+            category
+        });
+
+    } catch(error){
+
+        if(uploadedImage?.fileId){
+            await storage.delete(uploadedImage.fileId);
+        }
+
+        return responsReturn(res,500,{
+            error:error.message
+        });
+    }
+    }
+
+
+    deleteCategory = async(req,res)=>{
+
+    try{
+
+        const { id } = req.params;
+
+        const category = await CategoryModel.findById(id);
+
+        if(!category){
+            return responsReturn(res,404,{
+                error:"Category not found"
+            });
+        }
+
+        if(category.imageId){
+            await storage.delete(category.imageId);
+        }
+
+        await CategoryModel.findByIdAndDelete(id);
+
+        return responsReturn(res,200,{
+            message:"Category deleted successfully"
+        });
+
+    }catch(error){
+
+        return responsReturn(res,500,{
+            error:error.message
+        });
+
+    }
+
     }
 
 }

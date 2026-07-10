@@ -7,7 +7,8 @@ const router = express.Router();
 
 router.post("/category-add", authMiddleware,   uploadImage("image"), categoryControllers.addcategory);
 router.get("/get-category", authMiddleware, categoryControllers.getCategory);
-
+router.put("/category-update/:id",authMiddleware,uploadImage("image"), categoryControllers.updateCategory);
+router.delete("/category-delete/:id",authMiddleware,categoryControllers.deleteCategory);
 
 
 
