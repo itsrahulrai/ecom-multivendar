@@ -2,6 +2,7 @@ import { lazy, createElement } from "react";
 const AdminDashboard = lazy(() => import("../../views/admin/AdminDashboard"));
 const Orders = lazy(() => import("../../views/admin/Orders"));
 const Category = lazy(() => import("../../views/admin/Category"));
+const Brands = lazy(() => import("../../views/admin/Brands"));
 const OrderDetails = lazy(() => import("../../views/admin/OrderDetails"));
 const Sellers = lazy(() => import("../../views/admin/Sellers"));
 const PaymentRequests = lazy(() => import("../../views/admin/PaymentRequest"));
@@ -18,6 +19,11 @@ export const adminRoutes = [
     {
         path: 'admin/dashboard',
         element: createElement(AdminDashboard),
+        role: 'admin'
+    },
+    {
+        path: 'admin/dashboard/brands',
+        element: createElement(Brands),
         role: 'admin'
     },
     {

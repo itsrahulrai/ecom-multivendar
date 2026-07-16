@@ -5,7 +5,6 @@ import {
   Plus,
   Pencil,
 } from "lucide-react";
-import Swal from "sweetalert2";
 import Pagination from "../Pagination";
 import Search from "../../components/Search";
 import { useDispatch, useSelector } from "react-redux";

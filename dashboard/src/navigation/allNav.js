@@ -9,7 +9,8 @@ import {
   Boxes,
   MessageCircle,
   Settings,
- UserCircle,
+  UserCircle,
+  BadgePercent,
 } from "lucide-react";
 
 export const allNav = [
@@ -23,10 +24,17 @@ export const allNav = [
         to: "/admin/dashboard",
       },
       {
+        id: "brands",
+        label: "Brands",
+        icon: BadgePercent,
+        to: "/admin/dashboard/brands",
+      },
+      {
         label: "Category",
         icon: Tags,
         to: "/admin/dashboard/category",
       },
+
       {
         label: "Sellers",
         icon: Users,
@@ -72,59 +80,59 @@ export const allNav = [
         to: "/admin/dashboard/settings",
       },
 
-      
+
     ],
   },
 
 
-//Seller
-{
-  role: "seller",
-  section: "General",
-  items: [
-    {
-      label: "Dashboard",
-      icon: LayoutDashboard,
-      to: "/seller/dashboard",
-    },
+  //Seller
+  {
+    role: "seller",
+    section: "General",
+    items: [
+      {
+        label: "Dashboard",
+        icon: LayoutDashboard,
+        to: "/seller/dashboard",
+      },
 
- 
-     {
-      label: "Products",
-      icon: Package,
-      to: "/seller/dashboard/products",
-    },
-    {
-      label: "Orders",
-      icon: Package,
-      to: "/seller/dashboard/orders",
-    },
 
-    {
-      label: "Payments",
-      icon: Package,
-      to: "/seller/dashboard/payments",
-    },
+      {
+        label: "Products",
+        icon: Package,
+        to: "/seller/dashboard/products",
+      },
+      {
+        label: "Orders",
+        icon: Package,
+        to: "/seller/dashboard/orders",
+      },
 
-    {
-      label: "Chat Customer",
-      icon: Package,
-      to: "/seller/dashboard/chat-customer",
-    },
+      {
+        label: "Payments",
+        icon: Package,
+        to: "/seller/dashboard/payments",
+      },
 
-    {
-      label: "Chat Support",
-      icon: Package,
-      to: "/seller/dashboard/chat-support",
-    },
-    {
-      label: "Profile",
-      icon: UserCircle,
-      to: "/seller/dashboard/profile",
-    },
-  ],
-},
+      {
+        label: "Chat Customer",
+        icon: Package,
+        to: "/seller/dashboard/chat-customer",
+      },
 
-  
-  
+      {
+        label: "Chat Support",
+        icon: Package,
+        to: "/seller/dashboard/chat-support",
+      },
+      {
+        label: "Profile",
+        icon: UserCircle,
+        to: "/seller/dashboard/profile",
+      },
+    ],
+  },
+
+
+
 ];
