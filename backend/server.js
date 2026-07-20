@@ -5,6 +5,7 @@ import bodyParsern from "body-parser"
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/authRoutes.js";
 import categoryRoutes from "./routes/dashboard/categoryRoutes.js";
+import brandRoutes from "./routes/dashboard/brandRoutes.js";
 import { dbConnect } from "./utiles/db.js";
 dotenv.config();
 const app = express();
@@ -21,6 +22,7 @@ app.use(bodyParsern.json()))
 app.use(cookieParser())
 app.use('/api',authRoutes)
 app.use('/api',categoryRoutes)
+app.use('/api',brandRoutes)
 
 
 
