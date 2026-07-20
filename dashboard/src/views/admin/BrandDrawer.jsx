@@ -5,7 +5,7 @@ import {
   brandAdd,
   brandUpdate,
   clearMessages,
-} from "../../store/Reducers/BrandReducer";
+} from "../../store/Reducers/brandReducer";
 import toast from "react-hot-toast";
 
 const BrandDrawer = ({

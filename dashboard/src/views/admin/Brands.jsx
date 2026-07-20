@@ -4,7 +4,7 @@ import { Trash2, Plus, Pencil } from "lucide-react";
 import Pagination from "../Pagination";
 import Search from "../../components/Search";
 import { useDispatch, useSelector } from "react-redux";
-import { getBrand, brandDelete } from "../../store/Reducers/BrandReducer";
+import { getBrand, brandDelete } from "../../store/Reducers/brandReducer";
 import ConfirmModal from "../../components/confirmModal/ConfirmModal";
 
 const Brand = () => {
@@ -27,6 +27,7 @@ const Brand = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
+  // for Form data
   const [formData, setFormData] = useState({
     name: "",
     image: null,
@@ -38,6 +39,12 @@ const Brand = () => {
     const file = e.target.files?.[0];
 
     if (!file) return;
+
+    // Allow only images
+    if (!file.type.startsWith("image/")) {
+      alert("Please select a valid image.");
+      return;
+    }
 
     setFormData((prev) => ({
       ...prev,
@@ -54,7 +61,7 @@ const Brand = () => {
         searchValue: search,
       })
     );
-  }, [dispatch, currentPage, search]);
+  }, [dispatch, currentPage, perPage, search]);
 
   useEffect(() => {
     if (!successMessage) return;
@@ -66,16 +73,18 @@ const Brand = () => {
         searchValue: search,
       })
     );
-  }, [successMessage]);
+  }, [successMessage, currentPage, perPage, search, dispatch]);
 
   const handleOpenCreate = () => {
     setEditData(null);
+
     setFormData({
       name: "",
       image: null,
       preview: "",
       status: "Active",
     });
+
     setOpenDrawer(true);
   };
 
@@ -98,12 +107,15 @@ const Brand = () => {
   };
 
   const confirmDelete = async () => {
-    setDeleteLoading(true);
-
     try {
+      setDeleteLoading(true);
+
       await dispatch(brandDelete(deleteId)).unwrap();
+
       setDeleteModal(false);
       setDeleteId(null);
+    } catch (error) {
+      console.log(error);
     } finally {
       setDeleteLoading(false);
     }
@@ -111,24 +123,25 @@ const Brand = () => {
 
   return (
     <div className="space-y-6 pr-8">
-
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Brands</h2>
-          <p className="text-sm text-slate-500">
+          <h2 className="text-2xl font-bold text-slate-800">Brands</h2>
+          <p className="text-sm text-slate-500 mt-1">
             Manage all ecommerce brands
           </p>
         </div>
 
         <button
           onClick={handleOpenCreate}
-          className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-[#F54900] to-orange-500 text-white"
+          className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-[#F54900] to-orange-500 text-white text-sm font-semibold shadow-lg shadow-orange-200 hover:scale-105 transition-all"
         >
           <Plus size={18} />
           New Brand
         </button>
       </div>
 
+      {/* Search */}
       <div className="flex justify-end">
         <Search
           value={search}
@@ -140,65 +153,85 @@ const Brand = () => {
         />
       </div>
 
-      <div className="overflow-hidden rounded-2xl bg-white shadow">
-        <div className="grid grid-cols-5 px-6 py-4 bg-slate-100 font-semibold">
+      {/* Table */}
+      <div className="overflow-hidden rounded-[20px] border border-white/60 bg-white/80 backdrop-blur-xl shadow-[0_20px_60px_rgba(0,0,0,0.04)]">
+        {/* Header */}
+        <div className="grid grid-cols-5 gap-4 px-6 py-5 border-b border-slate-100 bg-slate-50/70 text-xs font-bold uppercase tracking-wider text-slate-400">
           <div>S.NO</div>
-          <div>Logo</div>
-          <div>Brand Name</div>
+          <div>Image</div>
+          <div>Name</div>
           <div>Status</div>
           <div className="text-right">Action</div>
         </div>
 
-        {brands?.map((brand, index) => (
-          <div
-            key={brand._id}
-            className="grid grid-cols-5 items-center px-6 py-4 border-b"
-          >
-            <div>{(currentPage - 1) * perPage + index + 1}</div>
-
-            <div>
-              <img
-                src={brand.image}
-                alt={brand.name}
-                className="w-14 h-14 rounded-xl object-cover"
-              />
-            </div>
-
-            <div>
-              <h4 className="font-semibold">{brand.name}</h4>
-              <p className="text-xs text-gray-400">{brand.slug}</p>
-            </div>
-
-            <div>
-              <span
-                className={`px-3 py-1 rounded-full text-xs ${
-                  brand.status === "Active"
-                    ? "bg-green-100 text-green-600"
-                    : "bg-red-100 text-red-600"
-                }`}
+        {/* Body */}
+        <div className="divide-y divide-slate-100">
+          {brands?.length > 0 ? (
+            brands.map((brand, index) => (
+              <div
+                key={brand._id}
+                className="grid grid-cols-5 gap-4 items-center px-6 py-5 hover:bg-orange-50/40 transition-all"
               >
-                {brand.status}
-              </span>
+                <div className="text-sm font-semibold text-slate-600">
+                  {(currentPage - 1) * perPage + index + 1}
+                </div>
+
+                <div>
+                  <img
+                    src={brand.image}
+                    alt={brand.name}
+                    className="w-14 h-14 rounded-2xl object-cover border border-slate-200"
+                  />
+                </div>
+
+                <div>
+                  <h4 className="text-sm font-semibold text-slate-700">
+                    {brand.name}
+                  </h4>
+                  <p className="text-xs text-slate-400">{brand.slug}</p>
+                </div>
+
+                <div>
+                  <button
+                    className={`relative w-10 h-5 rounded-full transition-all ${
+                      brand.status === "Active"
+                        ? "bg-emerald-500"
+                        : "bg-slate-300"
+                    }`}
+                  >
+                    <span
+                      className={`absolute top-[2px] left-[2px] w-4 h-4 rounded-full bg-white transition-all ${
+                        brand.status === "Active" ? "translate-x-5" : ""
+                      }`}
+                    />
+                  </button>
+                </div>
+
+                <div className="flex justify-end gap-2">
+                  <button
+                    onClick={() => handleEdit(brand)}
+                    className="w-9 h-9 rounded-md bg-amber-100 flex items-center justify-center text-amber-600 hover:bg-amber-500 hover:text-white transition-all"
+                  >
+                    <Pencil size={16} />
+                  </button>
+
+                  <button
+                    onClick={() => handleDelete(brand._id)}
+                    className="w-9 h-9 rounded-md bg-red-100 flex items-center justify-center text-red-600 hover:bg-red-500 hover:text-white transition-all"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="py-20 text-center text-slate-500">
+              No brands found.
             </div>
+          )}
+        </div>
 
-            <div className="flex justify-end gap-2">
-              <button
-                onClick={() => handleEdit(brand)}
-                className="w-9 h-9 rounded-md bg-amber-100 flex items-center justify-center"
-              >
-                <Pencil size={16} />
-              </button>
-
-              <button
-                onClick={() => handleDelete(brand._id)}
-                className="w-9 h-9 rounded-md bg-red-100 flex items-center justify-center"
-              >
-                <Trash2 size={16} />
-              </button>
-            </div>
-          </div>
-        ))}
-
+        {/* Pagination */}
         <Pagination
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
@@ -207,6 +240,7 @@ const Brand = () => {
         />
       </div>
 
+      {/* Drawer */}
       <BrandDrawer
         openDrawer={openDrawer}
         setOpenDrawer={setOpenDrawer}
@@ -220,7 +254,7 @@ const Brand = () => {
         open={deleteModal}
         loading={deleteLoading}
         title="Delete Brand"
-        message="Are you sure you want to delete this brand?"
+        message="Are you sure you want to delete this brand? This action cannot be undone."
         onClose={() => {
           setDeleteModal(false);
           setDeleteId(null);
